@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102d38">
+  <title>LegalIR · Tra cứu văn bản pháp luật</title>
+  <meta name="description" content="Demo minh họa tìm kiếm tiếng Việt trên 5 văn bản giả lập bằng BM25.">
+  <style>
+:root{--navy:#102d38;--navy2:#173946;--cream:#f7f6f1;--paper:#fffefa;--ink:#172e35;--muted:#697b7d;--line:#dfe6e2;--teal:#146e67;--mint:#dcece6;--gold:#dab775;--shadow:0 14px 40px rgba(15,45,53,.07)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--cream);color:var(--ink);font-family:'DM Sans',Arial,sans-serif;font-size:15px;line-height:1.6}button,textarea{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}.shell{width:min(1160px,calc(100% - 56px));margin:auto}
+.site-header{height:82px;background:var(--navy);color:#fff;border-bottom:1px solid rgba(255,255,255,.12)}.header-inner{display:flex;align-items:center;height:100%;gap:40px}.brand{display:flex;align-items:center;gap:11px;line-height:1}.brand-mark{width:38px;height:38px;border:1.5px solid var(--gold);display:grid;place-items:center;border-radius:9px;color:var(--gold);font-family:Georgia,serif;font-size:26px}.brand-mark span{font-size:17px}.brand strong{font-size:21px;letter-spacing:-.8px}.brand small{display:block;font-size:8px;letter-spacing:2.1px;color:#9bb7b8;margin-top:6px}.site-header nav{display:flex;gap:30px;margin-left:auto}.site-header nav a{font-size:13px;color:#c5d8d8;transition:color .2s}.site-header nav a:hover{color:#fff}.header-pill{border:1px solid rgba(255,255,255,.2);border-radius:30px;padding:7px 12px;font-size:10px;letter-spacing:1.1px;color:#d4e6e3;white-space:nowrap}.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#72d8b3;margin-right:7px;box-shadow:0 0 0 3px rgba(114,216,179,.13)}
+.sample-banner{background:#fff0d4;color:#60491f;border-bottom:1px solid #eed8aa;padding:10px 0;font-size:12px}.sample-banner[hidden]{display:none}.sample-banner .shell{display:flex;gap:16px;align-items:center}.sample-banner strong{white-space:nowrap;font-size:10px;letter-spacing:1.2px}
+.hero{background:var(--navy);color:white;overflow:hidden}.hero-grid{min-height:430px;display:grid;grid-template-columns:1.3fr 1fr;align-items:center;gap:32px}.hero-copy{padding:55px 0 70px;position:relative;z-index:1}.eyebrow,.kicker{font-size:10px;font-weight:700;letter-spacing:2.3px;color:var(--teal)}.eyebrow{color:#a9c6c0;display:flex;align-items:center;gap:12px}.eyebrow-line{width:27px;height:1px;background:var(--gold)}h1,h2,h3,p{margin-top:0}.hero h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(43px,4.3vw,67px);line-height:1.16;font-weight:500;letter-spacing:-2.5px;margin:20px 0}.hero h1 em{color:var(--gold);font-weight:500}.hero p{max-width:510px;color:#bed0d0;font-size:15px;line-height:1.8;margin-bottom:28px}.hero-link{display:inline-flex;gap:30px;align-items:center;background:#d5b577;color:#1a3034;padding:13px 18px;font-weight:700;font-size:13px;border-radius:3px;transition:transform .2s,background .2s}.hero-link:hover{transform:translateY(-2px);background:#e6c88d}
+.hero-art{height:360px;position:relative;align-self:end}.art-ring{position:absolute;border:1px solid rgba(132,185,181,.14);border-radius:50%;width:440px;height:440px;left:15px;top:-18px}.ring-two{width:315px;height:315px;left:77px;top:45px}.art-document{position:absolute;left:120px;top:42px;width:245px;height:340px;background:#f3f0e6;transform:rotate(-9deg);border-radius:5px;box-shadow:24px 18px 0 rgba(64,126,122,.17),0 25px 45px rgba(0,0,0,.2);padding:32px 27px}.art-seal{width:34px;height:34px;border:1px solid #aaa68c;color:#7a876f;border-radius:50%;display:grid;place-items:center;font-family:Georgia,serif;font-size:19px;margin-bottom:25px}.art-line{height:6px;border-radius:3px;background:#d7d9cf;width:83%;margin:10px 0}.art-line.wide{width:100%}.art-line.medium{width:68%}.art-line.short{width:43%}.art-gap{height:14px}.art-highlight{height:20px;width:91%;background:#d1e5d5;margin:11px 0;border-left:3px solid #458b78}.art-tag{position:absolute;background:#fff;color:#173d42;box-shadow:var(--shadow);border-radius:5px;padding:12px 15px;font-family:Georgia,serif;font-size:22px}.art-tag span{font-family:'DM Sans',Arial,sans-serif;display:block;font-size:8px;letter-spacing:1.5px;font-weight:700;color:#61817e}.tag-a{top:97px;left:25px;transform:rotate(-5deg)}.tag-b{right:0;bottom:42px;transform:rotate(6deg)}
+.stat-band{background:#eaf0e9;border-bottom:1px solid #dde6dc}.stat-grid{display:grid;grid-template-columns:1fr 1.15fr .8fr 1fr;align-items:center;min-height:96px}.stat-grid>div{padding:0 25px;border-left:1px solid #d4dfd6}.stat-grid>div:first-child{border:0;padding-left:0}.stat-grid strong{font-size:27px;font-family:'Playfair Display',Georgia,serif;font-weight:600;color:var(--navy);display:block;line-height:1.1}.stat-grid span{font-size:11px;color:#66807b}.stat-note{display:flex;align-items:center;gap:4px}.stat-note .live-dot{flex:none}.stat-note span:last-child{font-size:12px;font-weight:600;color:#37675c}
+.workspace{padding:78px 0 80px}.section-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:27px}.section-heading h2{font-family:'Playfair Display',Georgia,serif;font-size:34px;line-height:1.25;font-weight:500;letter-spacing:-1px;margin:7px 0 0}.section-aside{color:#859391;font-size:12px;padding-bottom:5px}.workspace-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(285px,1fr);gap:20px}.search-panel{background:var(--paper);border:1px solid var(--line);padding:33px 35px;box-shadow:var(--shadow);border-radius:5px}.search-panel label{display:block;font-weight:700;font-size:13px;margin-bottom:10px}.search-panel textarea{width:100%;border:1px solid #d5ded9;border-radius:4px;background:#fcfcf8;padding:15px 17px;resize:vertical;min-height:130px;outline:none;color:var(--ink);transition:border .2s,box-shadow .2s}.search-panel textarea:focus{border-color:#429080;box-shadow:0 0 0 3px rgba(66,144,128,.12)}.search-panel textarea::placeholder{color:#9aa9a6}.field-meta{display:flex;justify-content:space-between;color:#8c9b97;font-size:11px;margin:8px 0 19px}.search-button{border:0;background:var(--teal);color:#fff;width:100%;display:flex;align-items:center;justify-content:center;gap:12px;padding:14px 17px;border-radius:4px;font-weight:700;font-size:13px;transition:background .2s}.search-button:hover{background:#0d5751}.search-button:disabled{opacity:.65;cursor:wait}.search-button span:last-child{margin-left:auto}.search-icon{width:16px;height:16px;border:2px solid white;border-radius:50%;position:relative;margin-left:auto}.search-icon:after{content:'';position:absolute;width:7px;height:2px;background:white;transform:rotate(45deg);right:-6px;bottom:-3px}.examples{border-top:1px solid var(--line);margin-top:25px;padding-top:22px}.examples-label{font-size:10px;letter-spacing:1.6px;color:#778f8a;font-weight:700;margin-bottom:9px}.examples button{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;border-bottom:1px solid #e8ece7;background:none;color:#285a58;padding:9px 0;text-align:left;font-size:12px}.examples button:hover{color:#0c8a78}.examples button span{font-size:16px}.search-footnote{color:#8a9692;font-size:10.5px;margin-top:20px;line-height:1.5;display:flex;gap:8px}.search-footnote span{font-size:14px}.guide-panel{background:#e8eee9;border:1px solid #d9e2da;border-radius:5px;padding:37px 34px}.guide-num{font-size:10px;font-weight:700;letter-spacing:1.8px;color:#428176}.guide-panel h3{font-family:'Playfair Display',Georgia,serif;font-size:29px;font-weight:500;line-height:1.35;margin:16px 0 26px}.guide-panel ol{padding:0;margin:0;list-style:none}.guide-panel li{display:flex;gap:15px;align-items:baseline;font-size:12px;color:#395a57;margin:16px 0}.guide-panel li span{font-size:11px;color:#2f897b;font-weight:700;letter-spacing:1px}.guide-rule{height:1px;background:#cddcd2;margin:27px 0 19px}.guide-panel p{color:#81908a;font-size:11px;line-height:1.65;margin:0}
+.results-section{background:#f1f3ee;padding:70px 0 80px;border-top:1px solid #e3e9e2}.results-meta{color:#748680;font-size:13px;margin:-11px 0 20px}.export-button{border:1px solid #b9d3c8;background:transparent;color:#17685c;padding:9px 13px;border-radius:4px;font-weight:700;font-size:12px}.export-button:hover{background:#e0eee8}.export-button span{margin-left:10px}.results-list{display:grid;gap:13px}.empty-state{min-height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fffefa;border:1px dashed #cbd9d1;border-radius:5px;text-align:center;color:#3a5755;padding:25px}.empty-state p{margin:5px 0 0;color:#8a9a95;font-size:12px}.empty-icon{font-family:Georgia,serif;font-size:45px;color:#95bdb0;line-height:1;margin-bottom:8px}.result-card{display:grid;grid-template-columns:63px minmax(0,1fr);background:var(--paper);border:1px solid var(--line);border-radius:5px;box-shadow:0 6px 22px rgba(17,56,55,.035);overflow:hidden}.result-rank{background:#e8f1ec;border-right:1px solid #dfe9e1;display:flex;justify-content:center;padding-top:26px;font-family:'Playfair Display',Georgia,serif;font-size:25px;color:#237166}.result-body{padding:22px 25px 18px}.result-topline{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:8px}.result-id{font-size:10px;font-weight:700;letter-spacing:1.2px;color:#6c938a}.score{font-size:11px;color:#59766e;background:#edf5ef;border-radius:20px;padding:4px 9px;white-space:nowrap}.result-title{font-size:17px;line-height:1.45;font-weight:700;color:#183b40;margin:0 0 10px;overflow-wrap:anywhere}.excerpt{font-size:12px;color:#667c78;line-height:1.72;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:13px;white-space:pre-line}.result-actions{display:flex;gap:20px;align-items:center;flex-wrap:wrap}.result-actions button,.result-actions a{border:0;background:none;padding:0;font-size:11px;font-weight:700;color:#16746a}.result-actions a{color:#607a78}.result-actions button:hover,.result-actions a:hover{text-decoration:underline}.result-context{border-top:1px solid var(--line);margin-top:18px;padding-top:17px;white-space:pre-wrap;font-size:12px;line-height:1.8;color:#425c5b;max-height:320px;overflow:auto}.result-context[hidden]{display:none}mark{background:#fff0be;color:inherit;border-radius:2px;padding:0 1px}
+.method-section{padding:78px 0 95px}.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.method-grid article{background:#fffefa;border:1px solid var(--line);padding:28px 26px 25px;border-top:3px solid #7bad9e}.method-grid article>span{color:#87ac9c;font-family:'Playfair Display',Georgia,serif;font-size:29px}.method-grid h3{margin:15px 0 8px;font-size:16px}.method-grid p{font-size:12px;color:#778782;line-height:1.7;margin:0}.about-section{background:#e5ede7;padding:65px 0}.about-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:75px}.about-grid h2{font:500 34px/1.25 'Playfair Display',Georgia,serif;letter-spacing:-1px;margin:10px 0}.about-grid p{font-size:13px;color:#536f69;line-height:1.8;margin-bottom:13px}.about-grid strong{color:#1b5b56}footer{background:var(--navy);color:#9fb9b7}.footer-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:88px;font-size:11px}.footer-brand{font-size:21px;font-weight:700;color:#fff}.footer-brand span{color:var(--gold)}footer a{color:#d9e5e1}footer a:hover{text-decoration:underline}
+@media(max-width:850px){.site-header nav{display:none}.header-pill{margin-left:auto}.hero-grid{grid-template-columns:1fr .55fr}.hero-art{transform:scale(.8);transform-origin:left bottom}.stat-grid{grid-template-columns:repeat(2,1fr);padding:16px 0;gap:16px}.stat-grid>div:nth-child(3){border:0;padding-left:0}.workspace-grid{grid-template-columns:1fr}.guide-panel{display:none}.section-aside{display:none}}
+@media(max-width:650px){.shell{width:min(100% - 32px,1160px)}.site-header{height:68px}.header-pill{font-size:8px;padding:6px 8px}.sample-banner .shell{align-items:flex-start;flex-direction:column;gap:3px}.hero-grid{display:block;min-height:0}.hero-copy{padding:55px 0 60px}.hero h1{font-size:43px;letter-spacing:-1.8px}.hero-art{display:none}.stat-grid strong{font-size:23px}.stat-grid>div{padding-left:15px}.stat-grid>div:nth-child(2){padding-left:15px}.stat-grid>div:nth-child(4){padding-left:15px}.workspace,.method-section{padding:55px 0}.section-heading h2{font-size:29px}.search-panel{padding:23px 20px}.results-section{padding:55px 0}.result-heading{display:block}.result-heading h2{font-size:25px}.result-heading .export-button{margin-top:16px}.result-card{grid-template-columns:45px 1fr}.result-rank{font-size:19px;padding-top:23px}.result-body{padding:18px 16px}.result-title{font-size:15px}.method-grid,.about-grid{grid-template-columns:1fr}.about-grid{gap:14px}.footer-inner{flex-wrap:wrap;padding:22px 0}.footer-inner span:nth-child(2){order:3;width:100%}}
+
+/* Use one font with Vietnamese glyphs throughout. Mixed serif fallbacks split
+   accented words and the large tracking made labels look broken. */
+body,button,textarea{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+.hero h1,.section-heading h2,.guide-panel h3,.about-grid h2,
+.stat-grid strong,.result-rank,.method-grid article>span,
+.brand-mark,.art-seal,.art-tag,.empty-icon{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;letter-spacing:normal}
+.hero h1{font-weight:700;letter-spacing:-.025em}
+.hero h1 em{font-weight:700}
+.section-heading h2,.guide-panel h3,.about-grid h2{font-weight:650}
+.eyebrow,.kicker,.brand small,.header-pill,.examples-label,.guide-num,
+.result-id,.sample-banner strong,.art-tag span{letter-spacing:.04em}
+.result-title{word-break:normal}
+mark{padding:0}
+
+</style>
+  
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="#top" aria-label="LegalIR, về đầu trang">
+        <span class="brand-mark" aria-hidden="true">L<span>·</span></span>
+        <span><strong>LegalIR</strong><small>VIETNAMESE LEGAL SEARCH</small></span>
+      </a>
+      <nav aria-label="Điều hướng chính">
+        <a href="#tra-cuu">Tra cứu</a>
+        <a href="#phuong-phap">Phương pháp</a>
+        <a href="#gioi-thieu">Giới thiệu</a>
+      </nav>
+      <span class="header-pill"><span class="live-dot"></span> DEMO MINH HỌA</span>
+    </div>
+  </header>
+
+  <main id="top">
+    <div id="sampleBanner" class="sample-banner"><div class="shell"><strong>DỮ LIỆU MINH HỌA</strong><span>5 văn bản giả lập để trình diễn cách tìm kiếm. Các nội dung này không phải quy định pháp luật hiện hành.</span></div></div>
+    <section class="hero">
+      <div class="shell hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> ĐỒ ÁN CƠ SỞ KHOA HỌC DỮ LIỆU</div>
+          <h1>Tìm đúng văn bản.<br><em>Đọc đúng căn cứ.</em></h1>
+          <p>Nhập một câu hỏi pháp luật bằng tiếng Việt. Hệ thống tìm tối đa 5 văn bản liên quan và chỉ ra đoạn nội dung để bạn tự kiểm chứng.</p>
+          <a class="hero-link" href="#tra-cuu">Bắt đầu tra cứu <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="art-ring ring-one"></div><div class="art-ring ring-two"></div>
+          <div class="art-document"><div class="art-seal">L</div><div class="art-line wide"></div><div class="art-line"></div><div class="art-line medium"></div><div class="art-gap"></div><div class="art-line wide"></div><div class="art-line medium"></div><div class="art-line short"></div><div class="art-highlight"></div><div class="art-line medium"></div><div class="art-line"></div></div>
+          <div class="art-tag tag-a">01 <span>TRUY XUẤT</span></div><div class="art-tag tag-b">05 <span>VĂN BẢN</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stat-band" aria-label="Quy mô dữ liệu">
+      <div class="shell stat-grid">
+        <div><strong id="documentCount">—</strong><span>văn bản được lập chỉ mục</span></div>
+        <div><strong id="chunkCount">—</strong><span>đoạn văn bản có thể tìm kiếm</span></div>
+        <div><strong>05</strong><span>kết quả tối đa cho mỗi câu hỏi</span></div>
+        <div class="stat-note"><span class="live-dot"></span><span id="indexStatus">Đang kiểm tra chỉ mục…</span></div>
+      </div>
+    </section>
+
+    <section class="workspace shell" id="tra-cuu">
+      <div class="section-heading"><div><span class="kicker">01 / TRA CỨU</span><h2>Đặt câu hỏi của bạn</h2></div><span class="section-aside">Tìm kiếm từ khóa trong văn bản pháp luật</span></div>
+      <div class="workspace-grid">
+        <div class="search-panel">
+          <form id="searchForm">
+            <label for="question">Câu hỏi pháp luật</label>
+            <textarea id="question" name="question" maxlength="500" rows="5" placeholder="Ví dụ: Người lao động được nghỉ phép năm bao nhiêu ngày?" required></textarea>
+            <div class="field-meta"><span>Viết câu hỏi tự nhiên bằng tiếng Việt</span><span id="charCount">0 / 500</span></div>
+            <button class="search-button" id="searchButton" type="submit"><span class="search-icon" aria-hidden="true"></span><span id="buttonText">Tìm văn bản liên quan</span><span aria-hidden="true">↗</span></button>
+          </form>
+          <div class="examples"><div class="examples-label">THỬ VỚI CÂU HỎI MẪU</div><button type="button" data-example="Thời hạn cấp đăng ký xe máy cho người nước ngoài là bao lâu?">Đăng ký xe cho người nước ngoài <span>↗</span></button><button type="button" data-example="Mức phạt vi phạm nồng độ cồn đối với người đi xe máy là bao nhiêu?">Vi phạm nồng độ cồn <span>↗</span></button><button type="button" data-example="Điều kiện hưởng trợ cấp thất nghiệp là gì?">Trợ cấp thất nghiệp <span>↗</span></button></div>
+          <div class="search-footnote"><span aria-hidden="true">ⓘ</span> Kết quả hỗ trợ tìm tài liệu, không thay thế tư vấn pháp lý. Hãy kiểm tra hiệu lực và nội dung tại nguồn gốc.</div>
+        </div>
+        <aside class="guide-panel"><span class="guide-num">HƯỚNG DẪN SỬ DỤNG</span><h3>Từ câu hỏi đến<br>văn bản gốc.</h3><ol><li><span>01</span> Nhập vấn đề pháp luật cần tìm.</li><li><span>02</span> Xem tối đa 5 văn bản được xếp hạng.</li><li id="sourceStep"><span>03</span> Mở đoạn chứng cứ và truy cập nguồn gốc.</li></ol><div class="guide-rule"></div><p>Điểm xếp hạng là điểm BM25 tương đối cho từng câu hỏi; không phải xác suất đúng.</p></aside>
+      </div>
+    </section>
+
+    <section class="results-section" id="ket-qua" aria-live="polite">
+      <div class="shell">
+        <div class="section-heading result-heading"><div><span class="kicker">02 / KẾT QUẢ</span><h2>Văn bản được đề xuất</h2></div><button id="exportButton" class="export-button" type="button" hidden>Tải kết quả JSON <span aria-hidden="true">↓</span></button></div>
+        <div id="resultsMeta" class="results-meta">Nhập câu hỏi ở trên để bắt đầu tìm kiếm.</div>
+        <div id="results" class="results-list"><div class="empty-state"><div class="empty-icon">⌕</div><strong>Căn cứ pháp luật bắt đầu từ một câu hỏi.</strong><p>Chọn một câu hỏi mẫu hoặc nhập câu hỏi của riêng bạn.</p></div></div>
+      </div>
+    </section>
+
+    <section class="method-section shell" id="phuong-phap"><div class="section-heading"><div><span class="kicker">03 / PHƯƠNG PHÁP</span><h2>Hệ thống hoạt động thế nào?</h2></div></div><div class="method-grid"><article><span>01</span><h3>Tách đoạn pháp lý</h3><p>Văn bản được chia thành các đoạn ngắn và dài, giữ cấu trúc điều khoản để truy xuất và hiển thị chứng cứ.</p></article><article><span>02</span><h3>Tìm kiếm BM25</h3><p>Câu hỏi được chuẩn hóa thành các từ khóa; Bản demo minh họa chấm điểm BM25 trực tiếp trong trình duyệt.</p></article><article><span>03</span><h3>Xếp hạng văn bản</h3><p>Điểm từ các đoạn được gộp theo văn bản. Demo trả về tối đa 5 văn bản cùng đoạn chứng cứ tốt nhất.</p></article></div></section>
+
+    <section class="about-section" id="gioi-thieu"><div class="shell about-grid"><div><span class="kicker">VỀ DỰ ÁN</span><h2>Từ cuộc thi đến<br>một công cụ có thể dùng.</h2></div><div><p id="aboutModeText">LegalIR xuất phát từ bài toán truy xuất thông tin pháp luật tiếng Việt của UIT Data Science Challenge 2026. Bản demo này minh họa truy xuất BM25 trên 5 văn bản giả lập và chạy trực tiếp trong trình duyệt.</p><p>Pipeline dự thi đầy đủ còn có mô hình embedding, cross-encoder và hợp nhất thứ hạng, đạt <strong>0.9261 public Macro Recall@5</strong>. Con số đó là điểm của pipeline dự thi, <strong>không phải</strong> đánh giá riêng cho giao diện demo BM25 này.</p></div></div></section>
+  </main>
+  <footer><div class="shell footer-inner"><span class="footer-brand">LegalIR<span>·</span></span><span>Đồ án cơ sở Khoa học dữ liệu · UIT DSC 2026</span><a href="#top">Về đầu trang ↑</a></div></footer>
+<script>window.LEGALIR_OFFLINE_DOCUMENTS = [{"doc_id": "sample-01", "name": "MẪU · Quy trình đăng ký phương tiện", "passage": "Điều 1. Hồ sơ đăng ký phương tiện gồm đơn đề nghị, giấy tờ nhận dạng và giấy tờ chứng minh quyền sở hữu. Bộ phận tiếp nhận kiểm tra hồ sơ và cấp phiếu hẹn. Điều 2. Trong ba ngày làm việc kể từ khi nhận đủ hồ sơ hợp lệ, bộ phận tiếp nhận trả kết quả đăng ký phương tiện cho người nộp."}, {"doc_id": "sample-02", "name": "MẪU · Hướng dẫn nghỉ phép nội bộ", "passage": "Điều 1. Nhân viên gửi đơn xin nghỉ phép cho người quản lý trước ngày nghỉ. Điều 2. Người quản lý phản hồi yêu cầu nghỉ phép trong hai ngày làm việc. Bộ phận nhân sự lưu hồ sơ nghỉ phép đã được phê duyệt."}, {"doc_id": "sample-03", "name": "MẪU · Quy trình hỗ trợ tìm việc", "passage": "Điều 1. Người đăng ký hỗ trợ tìm việc nộp phiếu đăng ký và thông tin liên hệ. Điều 2. Bộ phận tư vấn xác nhận lịch hẹn và giới thiệu chương trình đào tạo kỹ năng."}, {"doc_id": "sample-04", "name": "MẪU · Quy trình thanh toán công tác phí", "passage": "Điều 1. Hồ sơ thanh toán công tác phí gồm quyết định cử đi công tác, bảng kê chi phí và chứng từ liên quan. Điều 2. Bộ phận kế toán kiểm tra chứng từ trước khi trình người có thẩm quyền phê duyệt."}, {"doc_id": "sample-05", "name": "MẪU · Quy trình tiếp nhận kiến nghị", "passage": "Điều 1. Kiến nghị được gửi qua phiếu tiếp nhận hoặc cổng thông tin nội bộ. Điều 2. Đơn vị phụ trách ghi nhận nội dung, phân loại và phản hồi trong năm ngày làm việc."}];</script>
+<script>
+// This adapter keeps the shareable HTML fully functional without a local server.
+// All documents are synthetic and are embedded by build_shareable_demo.py.
+const offlineDocuments = window.LEGALIR_OFFLINE_DOCUMENTS;
+const originalFetch = window.fetch.bind(window);
+const vietnameseStopwords = new Set([
+  'ai', 'bao', 'bằng', 'bị', 'các', 'cần', 'cho', 'có', 'của', 'đã', 'đang',
+  'để', 'đến', 'được', 'gì', 'hay', 'khi', 'không', 'là', 'làm', 'mà', 'một',
+  'những', 'nào', 'người', 'như', 'phải', 'ra', 'sẽ', 'thì', 'theo', 'trong',
+  'từ', 'và', 'về', 'việc', 'với', 'đối', 'thế', 'nhiêu',
+].map(word => fold(word)));
+
+function fold(value) {
+  return value.replace(/[Đđ]/g, 'd').normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+function terms(value) {
+  return (fold(value).match(/[a-z0-9]+/g) || [])
+    .filter(term => term.length > 1 && !vietnameseStopwords.has(term));
+}
+
+const indexedDocuments = offlineDocuments.map(document => {
+  const words = terms(`${document.name} ${document.passage}`);
+  const frequencies = new Map();
+  for (const word of words) frequencies.set(word, (frequencies.get(word) || 0) + 1);
+  return { ...document, words, frequencies };
+});
+const averageLength = indexedDocuments.reduce((sum, document) => sum + document.words.length, 0)
+  / indexedDocuments.length;
+
+function offlineSearch(question) {
+  const started = performance.now();
+  const query = question.trim();
+  if (!query) return { error: 'Vui lòng nhập câu hỏi.' };
+  if (query.length > 500) return { error: 'Câu hỏi tối đa 500 ký tự.' };
+  const queryTerms = [...new Set(terms(query))];
+  const scored = indexedDocuments.map(document => {
+    let score = 0;
+    for (const term of queryTerms) {
+      const tf = document.frequencies.get(term) || 0;
+      if (!tf) continue;
+      const df = indexedDocuments.filter(item => item.frequencies.has(term)).length;
+      const idf = Math.log(1 + (indexedDocuments.length - df + .5) / (df + .5));
+      score += idf * tf * 2.2 / (tf + 1.2 * (.25 + .75 * document.words.length / averageLength));
+    }
+    return { document, score };
+  }).filter(item => item.score > 0).sort((a, b) => b.score - a.score);
+  return {
+    question: query,
+    dataset_mode: 'sample',
+    method: 'BM25 trên văn bản minh họa (chạy trong trình duyệt)',
+    elapsed_ms: Math.max(1, Math.round(performance.now() - started)),
+    results: scored.slice(0, 5).map(({ document, score }, index) => ({
+      rank: index + 1,
+      doc_id: document.doc_id,
+      title: document.name,
+      source_url: '',
+      bm25_score: Math.round(score * 1000) / 1000,
+      excerpt: document.passage,
+      context: document.passage,
+    })),
+  };
+}
+
+window.fetch = async (url, options) => {
+  if (url === '/api/health') {
+    return {
+      ok: true,
+      json: async () => ({
+        status: 'ready', dataset_mode: 'sample',
+        counts: { documents: offlineDocuments.length, short_chunks: offlineDocuments.length },
+      }),
+    };
+  }
+  if (url === '/api/search') {
+    const payload = offlineSearch(JSON.parse(options.body).question);
+    return { ok: !payload.error, json: async () => payload };
+  }
+  return originalFetch(url, options);
+};
+
+</script>
+<script>
+const form = document.querySelector('#searchForm');
+const questionInput = document.querySelector('#question');
+const charCount = document.querySelector('#charCount');
+const searchButton = document.querySelector('#searchButton');
+const buttonText = document.querySelector('#buttonText');
+const results = document.querySelector('#results');
+const resultsMeta = document.querySelector('#resultsMeta');
+const exportButton = document.querySelector('#exportButton');
+let lastResponse = null;
+
+const numberFormat = new Intl.NumberFormat('vi-VN');
+const scoreFormat = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 2 });
+
+function element(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function safeSource(raw) {
+  try {
+    const url = new URL(raw);
+    return ['https:', 'http:'].includes(url.protocol) ? url.href : null;
+  } catch { return null; }
+}
+
+function highlightText(container, value, query) {
+  const terms = [...new Set((query.match(/[\p{L}\p{N}]+/gu) || []).filter(x => x.length >= 4))]
+    .sort((a, b) => b.length - a.length).slice(0, 18);
+  if (!terms.length) { container.textContent = value; return; }
+  const escaped = terms.map(x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const pattern = new RegExp(`(${escaped.join('|')})`, 'giu');
+  let from = 0;
+  for (const match of value.matchAll(pattern)) {
+    container.append(document.createTextNode(value.slice(from, match.index)));
+    container.append(element('mark', '', match[0]));
+    from = match.index + match[0].length;
+  }
+  container.append(document.createTextNode(value.slice(from)));
+}
+
+function showMessage(title, detail) {
+  results.replaceChildren();
+  const box = element('div', 'empty-state');
+  box.append(element('div', 'empty-icon', '⌕'), element('strong', '', title), element('p', '', detail));
+  results.append(box);
+}
+
+function renderResult(item, query) {
+  const card = element('article', 'result-card');
+  card.append(element('div', 'result-rank', String(item.rank).padStart(2, '0')));
+  const body = element('div', 'result-body');
+  const top = element('div', 'result-topline');
+  top.append(element('span', 'result-id', `VĂN BẢN #${item.doc_id}`), element('span', 'score', `BM25 ${scoreFormat.format(item.bm25_score)}`));
+  body.append(top, element('h3', 'result-title', item.title));
+  const excerpt = element('p', 'excerpt');
+  highlightText(excerpt, item.excerpt || item.context || 'Không có đoạn trích.', query);
+  body.append(excerpt);
+  const actions = element('div', 'result-actions');
+  const toggle = element('button', '', 'Xem đoạn chứng cứ ↓');
+  toggle.type = 'button';
+  toggle.setAttribute('aria-expanded', 'false');
+  const context = element('div', 'result-context');
+  context.hidden = true;
+  highlightText(context, item.context || item.excerpt || 'Không có nội dung.', query);
+  toggle.addEventListener('click', () => {
+    context.hidden = !context.hidden;
+    toggle.setAttribute('aria-expanded', String(!context.hidden));
+    toggle.textContent = context.hidden ? 'Xem đoạn chứng cứ ↓' : 'Thu gọn ↑';
+  });
+  actions.append(toggle);
+  const source = safeSource(item.source_url);
+  if (source) {
+    const link = element('a', '', 'Mở văn bản gốc ↗');
+    link.href = source;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    actions.append(link);
+  }
+  body.append(actions, context);
+  card.append(body);
+  return card;
+}
+
+async function search() {
+  const question = questionInput.value.trim();
+  if (!question) { questionInput.focus(); return; }
+  searchButton.disabled = true;
+  buttonText.textContent = 'Đang tìm kiếm…';
+  resultsMeta.textContent = 'Đang truy xuất các đoạn văn bản phù hợp…';
+  showMessage('Đang tìm kiếm trong kho pháp luật', 'Quá trình có thể mất vài giây.');
+  exportButton.hidden = true;
+  try {
+    const response = await fetch('/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.error || 'Không thể tìm kiếm lúc này.');
+    lastResponse = payload;
+    results.replaceChildren();
+    if (!payload.results.length) {
+      resultsMeta.textContent = 'Chưa tìm được văn bản phù hợp.';
+      showMessage('Chưa có kết quả', 'Hãy dùng từ khóa pháp luật cụ thể hơn và thử lại.');
+      return;
+    }
+    for (const item of payload.results) results.append(renderResult(item, payload.question));
+    resultsMeta.textContent = `${payload.results.length} văn bản · ${numberFormat.format(payload.elapsed_ms)} ms · ${payload.method}`;
+    exportButton.hidden = false;
+    document.querySelector('#ket-qua').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (error) {
+    lastResponse = null;
+    resultsMeta.textContent = 'Không thể hoàn thành tìm kiếm.';
+    showMessage('Có lỗi khi tìm kiếm', error.message || 'Vui lòng thử lại.');
+  } finally {
+    searchButton.disabled = false;
+    buttonText.textContent = 'Tìm văn bản liên quan';
+  }
+}
+
+form.addEventListener('submit', event => { event.preventDefault(); search(); });
+questionInput.addEventListener('input', () => { charCount.textContent = `${questionInput.value.length} / 500`; });
+document.querySelectorAll('[data-example]').forEach(button => {
+  button.addEventListener('click', () => {
+    questionInput.value = button.dataset.example;
+    questionInput.dispatchEvent(new Event('input'));
+    search();
+  });
+});
+exportButton.addEventListener('click', () => {
+  if (!lastResponse) return;
+  const blob = new Blob([JSON.stringify(lastResponse, null, 2)], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'legalir-ket-qua.json';
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+fetch('/api/health').then(response => response.json()).then(data => {
+  document.querySelector('#documentCount').textContent = numberFormat.format(data.counts.documents || 0);
+  document.querySelector('#chunkCount').textContent = numberFormat.format(data.counts.short_chunks || 0);
+  document.querySelector('#indexStatus').textContent = data.dataset_mode === 'sample' ? 'Chỉ mục minh họa sẵn sàng' : 'Chỉ mục sẵn sàng';
+  if (data.dataset_mode === 'sample') {
+    document.querySelector('#sampleBanner').hidden = false;
+    document.querySelector('#aboutModeText').textContent = 'LegalIR xuất phát từ bài toán truy xuất thông tin pháp luật tiếng Việt của UIT Data Science Challenge 2026. Ở chế độ này, giao diện sử dụng 5 văn bản giả lập để minh họa luồng truy xuất BM25 khi máy chưa có dữ liệu cuộc thi.';
+    document.querySelector('.guide-panel h3').textContent = 'Từ câu hỏi đến đoạn chứng cứ.';
+    document.querySelector('#sourceStep').lastChild.nodeValue = ' Mở đoạn chứng cứ trong văn bản minh họa.';
+    const examples = [
+      ['Hồ sơ đăng ký phương tiện gồm những gì?', 'Hồ sơ đăng ký phương tiện'],
+      ['Ai phê duyệt yêu cầu nghỉ phép?', 'Phê duyệt nghỉ phép'],
+      ['Hồ sơ thanh toán công tác phí gồm những gì?', 'Thanh toán công tác phí'],
+    ];
+    document.querySelectorAll('[data-example]').forEach((button, index) => {
+      button.dataset.example = examples[index][0];
+      button.firstChild.nodeValue = `${examples[index][1]} `;
+    });
+  }
+}).catch(() => {
+  document.querySelector('#indexStatus').textContent = 'Chưa kết nối được chỉ mục';
+});
+
+</script>
+</body>
+</html>
